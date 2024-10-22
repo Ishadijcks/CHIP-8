@@ -2,7 +2,14 @@ import { Display } from '$lib/chip8/Display';
 import { Memory } from '$lib/chip8/Memory';
 import { Stack } from '$lib/chip8/Stack';
 import { Register } from '$lib/chip8/Register';
-import type { Instruction } from '$lib/chip8/Instruction';
+import type { InstructionData } from '$lib/chip8/InstructionData';
+import type { BaseInstruction } from '$lib/chip8/instructions/BaseInstruction';
+import { ClearScreenInstruction } from '$lib/chip8/instructions/ClearScreenInstruction';
+import { JumpInstruction } from '$lib/chip8/instructions/JumpInstruction';
+import { SetIndexInstruction } from '$lib/chip8/instructions/SetIndexInstruction';
+import { SetRegisterInstruction } from '$lib/chip8/instructions/SetRegisterInstruction';
+import { AddRegisterInstruction } from '$lib/chip8/instructions/AddRegisterInstruction';
+import { DrawInstruction } from '$lib/chip8/instructions/DrawInstruction';
 
 export class Chip8 {
     public memory: Memory = new Memory();
@@ -32,6 +39,20 @@ export class Chip8 {
     // Sound timer
     // Variable registers
 
+    /**
+     * Instructions are matched greedily, sort them by increasing broadness
+     */
+    // prettier-ignore
+    public supportedInstructions: typeof BaseInstruction[] = [
+        ClearScreenInstruction,     // 0x00E0
+        JumpInstruction,            // 0x1NNN
+        SetRegisterInstruction,     // 0x6XNN
+        AddRegisterInstruction,     // 0x7XNN
+        DrawInstruction,            // 0xDXYN
+        SetIndexInstruction,        // 0xANNN
+
+    ];
+
     public start(program: Buffer): void {
         this.pc = this.memory.PROGRAM_OFFSET;
         this.memory.loadProgram(program);
@@ -46,88 +67,22 @@ export class Chip8 {
         this.execute(instruction);
     }
 
-    private execute(instruction: Instruction) {
-        console.log('Instruction', instruction.hex + '\t\t');
+    public decode(instructionData: InstructionData): BaseInstruction | undefined {
+        const instruction = this.supportedInstructions.find((instruction) => instruction.matches(instructionData));
 
-        const first = instruction.first;
-        const second = instruction.second;
-        const third = instruction.third;
-        const fourth = instruction.fourth;
-        switch (first) {
-            case 0x0:
-                switch (third) {
-                    case 0xe:
-                        switch (fourth) {
-                            case 0x0: {
-                                // 00E0
-                                console.log('Clear screen');
-                                this.display.clearScreen();
-                                return;
-                            }
-                            case 0xe: {
-                                // 00EE
-                                console.log('Call return');
-                                this.pc = this.stack.pop();
-                                return;
-                            }
-                        }
-                }
-                // 0NNN
-                console.log('Ignore');
-                return;
-            case 0x1: {
-                // 0NNN
-                const address = this.getAddress3(second, third, fourth);
-                console.log(`Jumping to ${address}`);
-                this.pc = address;
-                return;
-            }
-            case 0x6: {
-                const value = this.getAddress2(third, fourth);
-                console.log(`Setting V${instruction.secondHex} to ${value}`);
-                this.vRegisters[second].set(value);
-                return;
-            }
-            case 0x7: {
-                const increment = this.getAddress2(third, fourth);
-                console.log(`Adding ${increment} to V${instruction.secondHex}`);
-                this.vRegisters[second].add(increment);
-                return;
-            }
-            case 0xa: {
-                const value = this.getAddress3(second, third, fourth);
-                console.log(`Setting I to ${value}`);
-
-                this.i.set(value);
-                return;
-            }
-            case 0xd: {
-                let x = this.vRegisters[second].get() % this.display.WIDTH;
-                let y = this.vRegisters[third].get() % this.display.HEIGHT;
-                const I = this.i.get();
-                const N = fourth;
-                console.log(`Drawing something... x: ${x}, y: ${y}, I: ${I}, N: ${N}`);
-
-                this.vF.set(0);
-                for (let row = 0; row < N; row++) {
-                    const data = this.memory.read(I + row);
-                    const bits = data.toString(2).padStart(8, '0');
-                    console.log(data, bits);
-                    for (let bit = 0; bit < bits.length; bit++) {
-                        if (bits[bit] === '1') {
-                            const result = this.display.toggle(x + bit, y + row);
-                            if (result === true) {
-                                this.vF.set(1);
-                            }
-                        }
-                    }
-                }
-
-                return;
-            }
+        if (!instruction) {
+            return instruction;
         }
-        console.warn('<------ Unhandled instruction', instruction.hex);
-        this.display.print();
+        return new instruction(instructionData);
+    }
+
+    private execute(instructionData: InstructionData) {
+        const instruction = this.decode(instructionData);
+        if (!instruction) {
+            console.warn('<------ Unhandled instruction', instructionData.hex);
+            return;
+        }
+        instruction.execute(this);
     }
 
     private getAddress2(n1: number, n2: number): number {
@@ -138,7 +93,7 @@ export class Chip8 {
         return n1 * 256 + n2 * 16 + n3;
     }
 
-    private get vF(): Register {
+    public get vF(): Register {
         return this.vRegisters[0xf];
     }
 }

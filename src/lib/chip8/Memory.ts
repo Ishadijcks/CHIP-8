@@ -1,5 +1,5 @@
 import { InvalidFileSizeException, MemoryOutOfBoundsException } from '$lib/chip8/Exceptions';
-import { Instruction } from '$lib/chip8/Instruction';
+import { InstructionData } from '$lib/chip8/InstructionData';
 
 export class Memory {
     readonly SIZE: number = 4 * 1024;
@@ -45,15 +45,15 @@ export class Memory {
         console.log('program', program);
     }
 
-    public getInstruction(programCounter: number): Instruction {
+    public getInstruction(programCounter: number): InstructionData {
         if (programCounter % 2 !== 0) {
             throw new InvalidFileSizeException(`The program counter is not a multiple of 2 ${programCounter}`);
         }
-        return new Instruction(this.read(programCounter), this.read(programCounter + 1));
+        return new InstructionData(this.read(programCounter), this.read(programCounter + 1));
     }
 
-    public getContext(programCounter: number, contextSize: number = 10): Instruction[] {
-        const res: Instruction[] = [];
+    public getContext(programCounter: number, contextSize: number = 10): InstructionData[] {
+        const res: InstructionData[] = [];
         const start = Math.max(0, programCounter - 2 * contextSize);
         const end = Math.min(this.SIZE, programCounter + 2 * contextSize);
         for (let i = start; i < end; i += 2) {

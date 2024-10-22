@@ -4,7 +4,6 @@
     import { AppBar, AppShell } from '@skeletonlabs/skeleton';
     import ProgramCounterDisplay from './ProgramCounterDisplay.svelte';
     import ChipDisplay from './ChipDisplay.svelte';
-    import { onMount } from 'svelte';
 
     export let data: PageData;
 
@@ -18,11 +17,9 @@
         chip8 = chip8;
     };
 
-    $: memory = chip8.memory;
-
-    setInterval(() => {
-        step();
-    }, 1000);
+    // setInterval(() => {
+    //     step();
+    // }, 1000);
 </script>
 
 <AppShell>
@@ -31,8 +28,8 @@
     </svelte:fragment>
     <svelte:fragment slot="sidebarRight">
         <!-- Hidden below Tailwind's large breakpoint -->
-        <div id="sidebar-right" class="w-96 shadow-xl">
-            <ProgramCounterDisplay {memory} programCounter={chip8.pc} />
+        <div id="sidebar-right" class="w-96 shadow-xl p-4 h-full">
+            <ProgramCounterDisplay {chip8} programCounter={chip8.pc} />
         </div>
     </svelte:fragment>
 
