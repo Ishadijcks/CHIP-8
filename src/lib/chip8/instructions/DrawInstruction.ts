@@ -23,12 +23,11 @@ export class DrawInstruction extends BaseInstruction {
         const y = chip8.vRegisters[this.y].get() % chip8.display.HEIGHT;
         const I = chip8.i.get();
 
-        // console.log(`Drawing something... x: ${x}, y: ${y}, I: ${I}, N: ${N}`);
         chip8.vF.set(0);
         for (let row = 0; row < this.n; row++) {
             const data = chip8.memory.read(I + row);
             const bits = data.toString(2).padStart(8, '0');
-            console.log(data, bits);
+
             for (let bit = 0; bit < bits.length; bit++) {
                 if (bits[bit] === '1') {
                     const result = chip8.display.toggle(x + bit, y + row);

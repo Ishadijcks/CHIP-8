@@ -59,7 +59,6 @@ export class Chip8 {
     }
 
     public step(): void {
-        console.log('\nstep', this.pc);
         const instruction = this.memory.getInstruction(this.pc);
 
         this.pc += 2;

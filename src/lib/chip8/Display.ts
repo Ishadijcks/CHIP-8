@@ -47,7 +47,6 @@ export class Display {
             for (let x = 0; x < this.WIDTH; x++) {
                 row += this.grid[y][x] ? 'X' : '-';
             }
-            console.log(row);
         }
     }
 }

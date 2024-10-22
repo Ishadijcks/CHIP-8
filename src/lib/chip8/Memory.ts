@@ -39,10 +39,8 @@ export class Memory {
     public loadProgram(program: Buffer) {
         // TODO(@Isha): Reset entire memory?
         for (let i = 0; i < program.length; i++) {
-            console.log(`setting ${this.PROGRAM_OFFSET + i} to ${program[i]}`);
             this._storage[this.PROGRAM_OFFSET + i] = program[i];
         }
-        console.log('program', program);
     }
 
     public getInstruction(programCounter: number): InstructionData {
