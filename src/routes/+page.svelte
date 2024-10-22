@@ -24,7 +24,7 @@
 
 <AppShell>
     <svelte:fragment slot="header">
-        <AppBar>Skeleton</AppBar>
+        <AppBar>CHIP-8</AppBar>
     </svelte:fragment>
     <svelte:fragment slot="sidebarRight">
         <!-- Hidden below Tailwind's large breakpoint -->
@@ -34,7 +34,7 @@
     </svelte:fragment>
 
     <div class="p-4">
-        <button class="variant-filled-primary" on:click={step}>Step</button>
+        <button class="btn variant-filled-primary" on:click={step}>Step</button>
 
         <div class="flex flex-row justify-center">
             <ChipDisplay display={chip8.display}></ChipDisplay>
