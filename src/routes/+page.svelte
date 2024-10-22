@@ -1,15 +1,46 @@
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
+<script lang="ts">
+    import type { PageData } from './$types';
+    import { Chip8 } from '$lib/chip8/Chip8';
+    import { AppBar, AppShell } from '@skeletonlabs/skeleton';
+    import ProgramCounterDisplay from './ProgramCounterDisplay.svelte';
+    import ChipDisplay from './ChipDisplay.svelte';
+    import { onMount } from 'svelte';
 
-<div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-5">
-		<h1 class="h1">Let's get cracking bones!</h1>
-		<p>Start by exploring:</p>
-		<ul>
-			<li><code class="code">/src/routes/+layout.svelte</code> - barebones layout</li>
-			<li><code class="code">/src/app.postcss</code> - app wide css</li>
-			<li>
-				<code class="code">/src/routes/+page.svelte</code> - this page, you can replace the contents
-			</li>
-		</ul>
-	</div>
-</div>
+    export let data: PageData;
+
+    let chip8 = new Chip8();
+
+    const program = data.file;
+    chip8.start(program);
+
+    const step = () => {
+        chip8.step();
+        chip8 = chip8;
+    };
+
+    $: memory = chip8.memory;
+
+    setInterval(() => {
+        step();
+    }, 1000);
+</script>
+
+<AppShell>
+    <svelte:fragment slot="header">
+        <AppBar>Skeleton</AppBar>
+    </svelte:fragment>
+    <svelte:fragment slot="sidebarRight">
+        <!-- Hidden below Tailwind's large breakpoint -->
+        <div id="sidebar-right" class="w-96 shadow-xl">
+            <ProgramCounterDisplay {memory} programCounter={chip8.pc} />
+        </div>
+    </svelte:fragment>
+
+    <div class="p-4">
+        <button class="variant-filled-primary" on:click={step}>Step</button>
+
+        <div class="flex flex-row justify-center">
+            <ChipDisplay display={chip8.display}></ChipDisplay>
+        </div>
+    </div>
+</AppShell>
