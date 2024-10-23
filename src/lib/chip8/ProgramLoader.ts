@@ -2,7 +2,7 @@ import * as fs from 'node:fs';
 import { InvalidFileSizeException } from '$lib/chip8/Exceptions';
 
 export class ProgramLoader {
-    public readFile(path: string): { file: number[] } {
+    public readFile(path: string): number[] {
         const file = fs.readFileSync(path);
         console.log(file);
 
@@ -14,8 +14,6 @@ export class ProgramLoader {
             res.push(file[i]);
         }
 
-        return {
-            file: res,
-        };
+        return res;
     }
 }

@@ -2,8 +2,6 @@ import type { Chip8 } from '$lib/chip8/Chip8';
 import type { InstructionData } from '$lib/chip8/InstructionData';
 
 export abstract class BaseInstruction {
-    public abstract name: string;
-
     public value: number;
     public hex: string;
 

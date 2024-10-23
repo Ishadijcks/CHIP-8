@@ -2,27 +2,22 @@ import { BaseInstruction } from '$lib/chip8/instructions/BaseInstruction';
 import type { Chip8 } from '../Chip8';
 import type { InstructionData } from '$lib/chip8/InstructionData';
 
-export class AddRegisterInstruction extends BaseInstruction {
+export class SetDelayTimerInstruction extends BaseInstruction {
     constructor(data: InstructionData) {
         super(data);
-        this.parseXYN();
+        this.parseXNN();
     }
 
     public static matches(data: InstructionData): boolean {
-        return data.first === 0x8 && data.fourth == 0x4;
+        return data.first === 0xf && data.third === 0x1 && data.fourth === 0x5;
     }
 
     public getDescription(): string {
-        const x = this.x.toString(16);
-        const y = this.y.toString(16);
-        return `V${x} = V${x} + V${y}`;
+        return `DELAY = V${this.x.toString(16)}`;
     }
 
     public execute(chip8: Chip8): void {
         const vx = chip8.vRegisters[this.x];
-        const vy = chip8.vRegisters[this.y];
-
-        const overflown = vx.add(vy.get());
-        chip8.vF.set(overflown ? 1 : 0);
+        chip8.delayTimer.set(vx.get());
     }
 }

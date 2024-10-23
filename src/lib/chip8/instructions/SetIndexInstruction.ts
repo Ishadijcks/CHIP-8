@@ -3,8 +3,6 @@ import { type Chip8 } from '../Chip8';
 import { type InstructionData } from '$lib/chip8/InstructionData';
 
 export class SetIndexInstruction extends BaseInstruction {
-    public name: string = 'SetIndexInstruction';
-
     constructor(data: InstructionData) {
         super(data);
         this.parseNNN();
@@ -15,7 +13,7 @@ export class SetIndexInstruction extends BaseInstruction {
     }
 
     public getDescription(): string {
-        return `Set I to ${this.n}`;
+        return `I = ${this.n}`;
     }
 
     public execute(chip8: Chip8): void {

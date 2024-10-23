@@ -1,9 +1,11 @@
 export class Register {
     public readonly name: string;
+    public readonly SIZE;
     _value: number = 0;
 
-    constructor(name: string) {
+    constructor(name: string, size: number = 256) {
         this.name = name;
+        this.SIZE = size;
     }
 
     public get(): number {
@@ -14,7 +16,16 @@ export class Register {
         this._value = value;
     }
 
-    public add(increment: number): void {
+    /**
+     * Returns true if overflown
+     * @param increment
+     */
+    public add(increment: number): boolean {
         this._value += increment;
+        if (this._value > this.SIZE - 1) {
+            this._value = this._value % this.SIZE;
+            return true;
+        }
+        return false;
     }
 }

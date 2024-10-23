@@ -3,8 +3,6 @@ import { type Chip8 } from '../Chip8';
 import { type InstructionData } from '$lib/chip8/InstructionData';
 
 export class DrawInstruction extends BaseInstruction {
-    public name: string = 'DrawInstruction';
-
     constructor(data: InstructionData) {
         super(data);
         this.parseXYN();

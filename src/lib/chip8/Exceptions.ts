@@ -10,3 +10,6 @@ export class EmptyStackException extends Chip8Exception {}
 
 // Memory
 export class MemoryOutOfBoundsException extends Chip8Exception {}
+
+// Keypad
+export class InvalidKeyException extends Chip8Exception {}

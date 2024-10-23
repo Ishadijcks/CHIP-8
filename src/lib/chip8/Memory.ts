@@ -36,7 +36,14 @@ export class Memory {
         this.loadFont();
     }
 
-    public loadProgram(program: Buffer) {
+    public clear() {
+        for (let i = 0; i < this.SIZE; i++) {
+            this._storage[i] = 0;
+        }
+        this.loadFont();
+    }
+
+    public loadProgram(program: number[]) {
         // TODO(@Isha): Reset entire memory?
         for (let i = 0; i < program.length; i++) {
             this._storage[this.PROGRAM_OFFSET + i] = program[i];

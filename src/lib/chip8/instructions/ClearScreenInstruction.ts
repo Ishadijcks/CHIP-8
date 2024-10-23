@@ -3,8 +3,6 @@ import type { Chip8 } from '../Chip8';
 import type { InstructionData } from '$lib/chip8/InstructionData';
 
 export class ClearScreenInstruction extends BaseInstruction {
-    public name: string = 'ClearScreenInstruction';
-
     public static matches(data: InstructionData): boolean {
         return data.value === 0x00e0;
     }
