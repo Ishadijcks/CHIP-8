@@ -4,6 +4,10 @@ export class Keypad {
     readonly KEY_COUNT = 0x10;
     private _keys: boolean[] = [];
 
+    get keys(): boolean[] {
+        return this._keys;
+    }
+
     constructor() {
         for (let i = 0; i < this.KEY_COUNT; i++) {
             this._keys.push(false);

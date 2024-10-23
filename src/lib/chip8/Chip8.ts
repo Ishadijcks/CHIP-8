@@ -68,6 +68,8 @@ export class Chip8 {
     public delayTimer = new Timer('DELAY');
     public soundTimer = new Timer('SOUND');
 
+    private _interval: ReturnType<typeof setInterval>;
+
     /**
      * Instructions are matched greedily, sort them by increasing broadness
      */
@@ -112,6 +114,16 @@ export class Chip8 {
         this.memory.clear();
         this.memory.loadProgram(program);
         this.display.clearScreen();
+
+        clearInterval(this._interval);
+        this._interval = setInterval(() => {
+            this.secondCounter();
+        }, 1000.0 / 60.0);
+    }
+
+    public secondCounter() {
+        this.soundTimer.set(Math.max(0, this.soundTimer.get() - 1));
+        this.delayTimer.set(Math.max(0, this.delayTimer.get() - 1));
     }
 
     public step(): void {
@@ -138,14 +150,6 @@ export class Chip8 {
             return;
         }
         instruction.execute(this);
-    }
-
-    private getAddress2(n1: number, n2: number): number {
-        return n1 * 16 + n2;
-    }
-
-    private getAddress3(n1: number, n2: number, n3: number): number {
-        return n1 * 256 + n2 * 16 + n3;
     }
 
     public get vF(): Register {

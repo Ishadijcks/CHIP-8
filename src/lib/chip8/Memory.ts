@@ -51,9 +51,9 @@ export class Memory {
     }
 
     public getInstruction(programCounter: number): InstructionData {
-        if (programCounter % 2 !== 0) {
-            throw new InvalidFileSizeException(`The program counter is not a multiple of 2 ${programCounter}`);
-        }
+        // if (programCounter % 2 !== 0) {
+        //     throw new InvalidFileSizeException(`The program counter is not a multiple of 2 ${programCounter}`);
+        // }
         return new InstructionData(this.read(programCounter), this.read(programCounter + 1));
     }
 

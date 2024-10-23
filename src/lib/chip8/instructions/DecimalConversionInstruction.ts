@@ -20,7 +20,6 @@ export class DecimalConversionInstruction extends BaseInstruction {
         const x = chip8.vRegisters[this.x].get();
         const i = chip8.i.get();
         const xString = x.toString().padStart(3, '0');
-        console.log(x, xString);
         chip8.memory.write(i + 0, +xString[0]);
         chip8.memory.write(i + 1, +xString[1]);
         chip8.memory.write(i + 2, +xString[2]);
